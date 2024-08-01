@@ -8,6 +8,7 @@ import mongoose, { Model } from "mongoose";
 import { User } from "src/schemas/User.schema";
 import { CreateUserDTO } from "./dto/CreateUserDTO.dto";
 import { UpdateUserDTO } from "./dto/UpdateUserDTO.dto";
+import { UserSettings } from "src/schemas/UserSettings.schema";
 
 @Injectable()
 export class UserService {
@@ -15,22 +16,34 @@ export class UserService {
     private readonly logger = new Logger(UserService.name);
 
     constructor(
-        @InjectModel(User.name) private userModel: Model<User>
+        @InjectModel(User.name) private userModel: Model<User>,
+        @InjectModel(UserSettings.name) private userSettingsModel: Model<UserSettings>
     ) {
 
     }
 
-    createUser(createUserDTO: CreateUserDTO) {
+    async createUser({ settings, ...createUserDTO }: CreateUserDTO) {
         this.logger.log('Creating a new user...');
+        if (settings) {
+            const newSettings = new this.userSettingsModel(settings);
+            const savedNewSettings = await newSettings.save();
+            const newUser = new this.userModel({
+                ...createUserDTO,
+                settings: savedNewSettings._id,
+            });
+            return newUser.save();
+        }
         const newUser = new this.userModel(createUserDTO);
         return newUser.save();
     }
 
     getUsers() {
+        this.logger.log('Getting all user...');
         return this.userModel.find().exec();
     }
 
     async getUserById(id: string) {
+        this.logger.log('Getting user by ID...');
         const userId = mongoose.Types.ObjectId.isValid(id);
         if (!userId) {
             throw new NotFoundException(`Invalid user ID "${id}".`);
@@ -43,6 +56,7 @@ export class UserService {
     }
     
     async updateUser(id: string, updateUserDTO: UpdateUserDTO) {
+        this.logger.log('Updating user...');
         const userId = await this.getUserById(id);
         return this.userModel.findByIdAndUpdate(userId, updateUserDTO, { new: true }).exec();
     }

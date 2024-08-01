@@ -8,6 +8,7 @@ import {
 import { getDBConfig } from './configs/database.config';
 import { User, userSchema } from './schemas/User.schema';
 import { MongooseConnectionService } from './providers/mongoose-connection.service';
+import { userSettingsSchema } from './schemas/UserSettings.schema';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MongooseConnectionService } from './providers/mongoose-connection.servi
     }),
     MongooseModule.forFeature([
       { name: "User", schema: userSchema },
+      { name: "UserSettings", schema: userSettingsSchema }
     ]),
     UserModule
   ],

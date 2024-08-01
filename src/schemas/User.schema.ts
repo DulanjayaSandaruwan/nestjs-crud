@@ -3,6 +3,8 @@ import {
     Prop, 
     SchemaFactory 
 } from "@nestjs/mongoose";
+import mongoose from "mongoose";
+import { UserSettings } from "./UserSettings.schema";
 
 @Schema()
 export class User {
@@ -18,6 +20,9 @@ export class User {
 
     @Prop({ required: false })
     avatarUrl: string;
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserSettings' })
+    settings?: UserSettings;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
