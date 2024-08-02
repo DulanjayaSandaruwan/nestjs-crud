@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { 
     IsBoolean,
     IsNotEmpty, 
@@ -9,7 +10,7 @@ import {
 export class CreateUserSettingsDTO {
     @IsOptional()
     @IsBoolean()
-    receiveNotification?: boolean;
+    receiveNotifications?: boolean;
 
     @IsOptional()
     @IsBoolean()
@@ -35,6 +36,7 @@ export class CreateUserDTO {
 
     @IsOptional()
     @ValidateNested()
+    @Type(() => CreateUserSettingsDTO)
     settings?: CreateUserSettingsDTO;
 
 }

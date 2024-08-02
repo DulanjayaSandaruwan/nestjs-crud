@@ -10,16 +10,22 @@ import {
     UserSettings,
     userSettingsSchema,
   } from 'src/schemas/UserSettings.schema';
+import { postSchema } from "src/schemas/Post.schema";
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{
+        MongooseModule.forFeature([
+        {
             name: 'User',
             schema: userSchema,
         },
         {
             name: 'UserSettings',
             schema: userSettingsSchema
+        },
+        {
+            name: 'Post',
+            schema: postSchema,
         }
     ])
     ],
